@@ -43,6 +43,14 @@ def main():
                 print("Game Over!")
                 pygame.quit()
                 return
+            for shot in shots_group:
+                if shot.collission_check(asteroid):
+                    new_asteroids = asteroid.split()
+                    if new_asteroids:
+                        for asteroid_data in new_asteroids:
+                            asteroid_field.spawn(*asteroid_data)
+                    shot.kill()
+                    break
         
         for drawable in drawable_group:
             drawable.draw(window_surface)
