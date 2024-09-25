@@ -45,11 +45,20 @@ class Player(TriangleShape):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
         
-    def shoot(self):
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
+    # def shoot(self):
+    #     forward = pygame.Vector2(0, 1).rotate(self.rotation)
 
-        if self.shot_cooldown > 0:
-            return
-        else:
+    #     if self.shot_cooldown > 0:
+    #         return
+    #     else:
+    #         self.shot_cooldown = PLAYER_SHOT_COOLDOWN
+    #         shot = Shot(self.position.x, self.position.y, forward * PLAYER_SHOOT_SPEED)
+    
+    def shoot(self):
+        if self.shot_cooldown <= 0:
+            # Calculate the front vertex of the triangle
+            forward = pygame.Vector2(0, 1).rotate(self.rotation)
+            shot_position = self.position + forward * self.radius
+            shot_velocity = forward * SHOT_SPEED
+            Shot(shot_position.x, shot_position.y, shot_velocity)
             self.shot_cooldown = PLAYER_SHOT_COOLDOWN
-            shot = Shot(self.position.x, self.position.y, forward * PLAYER_SHOOT_SPEED)

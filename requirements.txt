@@ -1,1 +1,1 @@
-pygame==2.6.0z
+pygame==2.6.0
