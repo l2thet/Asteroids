@@ -7,6 +7,7 @@ from shot import Shot
 
 def main():  
     pygame.init()
+    pygame.font.init()
     flags = pygame.SCALED
     window_surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags)
     
@@ -25,6 +26,12 @@ def main():
     
     player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
     asteroid_field = AsteroidField()
+    
+    # Create a font object
+    font = pygame.font.Font(None, 36)# None for default font, 36 for font size
+    
+    # Initialize start time
+    start_time = pygame.time.get_ticks()
     
     while True:
         for event in pygame.event.get():
@@ -54,6 +61,28 @@ def main():
         
         for drawable in drawable_group:
             drawable.draw(window_surface)
+        
+        # Calculate elapsed time
+        elapsed_time = (pygame.time.get_ticks() - start_time) // 1000  # Convert to seconds
+        elapsed_time_text = f'{elapsed_time}'
+        
+        # Render "Score:" text in bold white
+        score_text = font.render('Survived:', True, (255, 255, 255))  # White color
+        score_text_width = score_text.get_width()
+        
+        # Render elapsed time in red
+        elapsed_time_text = font.render(f'{elapsed_time}', True, (255, 0, 0))  # Red color
+        
+        
+        # Calculate positions
+        surface_width = window_surface.get_width()
+        x_score = surface_width - score_text_width - elapsed_time_text.get_width() - 10  # 10 pixels padding from the right edge
+        x_time = x_score + score_text_width
+        y = 10  # 10 pixels padding from the top edge
+        
+        # Blit texts to the screen
+        window_surface.blit(score_text, (x_score, y))
+        window_surface.blit(elapsed_time_text, (x_time, y))
         
         pygame.display.flip()
     
