@@ -9,11 +9,11 @@ from ui import UI
 def main():  
     pygame.init()
     pygame.font.init()
-    pygame.joystick.init()
-    
+
+
     flags = pygame.SCALED
     window_surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags)
-    
+
     def draw():
         window_surface.fill((0, 0, 0))
         
@@ -79,6 +79,8 @@ def main():
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     paused = not paused  # Toggle paused state
+            
+
 
         UI.paused = paused
         
