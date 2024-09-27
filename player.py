@@ -17,12 +17,10 @@ class Player(TriangleShape):
             self.joystick.init()
         
     def triangle(self):
-        # Define the vertices of the triangle based on the current rotation
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        right = pygame.Vector2(1, 0).rotate(self.rotation) * self.radius / 1.5
-        a = self.position + forward * self.radius
-        b = self.position - forward * self.radius - right
-        c = self.position - forward * self.radius + right
+        # Calculate the vertices of the triangle based on the position and rotation
+        a = self.position + pygame.Vector2(0, -self.radius).rotate(self.rotation)
+        b = self.position + pygame.Vector2(self.radius, self.radius).rotate(self.rotation)
+        c = self.position + pygame.Vector2(-self.radius, self.radius).rotate(self.rotation)
         return [a, b, c]
     
     def draw(self, screen):
@@ -51,14 +49,14 @@ class Player(TriangleShape):
         if self.joystick:
             x_axis = self.joystick.get_axis(0)  # X-axis
             y_axis = self.joystick.get_axis(1)  # Y-axis
-            if x_axis < -0.5:  # Left
+            if x_axis < -0.10:  # Left
                 self.rotate(dt * x_axis)
-            if x_axis > 0.5:  # Right
+            if x_axis > 0.10:  # Right
                 self.rotate(dt * x_axis)
-            if y_axis > -0.5:  # Up
-                self.move(dt * -y_axis)
-            if y_axis < 0.5:  # Down
-                self.move(dt * -y_axis)
+            if y_axis > -0.3:  # Up
+                self.move(dt * y_axis)
+            if y_axis < 0.3:  # Down
+                self.move(dt * y_axis)
             if self.joystick.get_button(0):  # Button 0
                 self.shot_cooldown -= dt
                 self.shoot()
@@ -70,7 +68,7 @@ class Player(TriangleShape):
     def shoot(self):
         if self.shot_cooldown <= 0:
             # Calculate the front vertex of the triangle
-            forward = pygame.Vector2(0, 1).rotate(self.rotation)
+            forward = pygame.Vector2(0, -1).rotate(self.rotation)
             shot_position = self.position + forward * self.radius
             shot_velocity = forward * SHOT_SPEED
             Shot(shot_position.x, shot_position.y, shot_velocity)

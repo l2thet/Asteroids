@@ -25,10 +25,6 @@ class TriangleShape(pygame.sprite.Sprite):
         return math.hypot(point[0] - circle_center[0], point[1] - circle_center[1]) <= circle_radius
 
     def line_intersects_circle(self, p1, p2, circle_center, circle_radius):
-        # Check if either endpoint is inside the circle
-        if self.point_in_circle(p1, circle_center, circle_radius) or self.point_in_circle(p2, circle_center, circle_radius):
-            return True
-
         # Vector from p1 to p2
         p1_to_p2 = pygame.Vector2(p2) - pygame.Vector2(p1)
         # Vector from p1 to circle center
