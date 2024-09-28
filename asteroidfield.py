@@ -33,6 +33,10 @@ class AsteroidField(pygame.sprite.Sprite):
         self.spawn_timer = 0.0
 
     def spawn(self, radius, position, velocity):
+        # Ensure the asteroid spawns inside the play area
+        position.x = max(radius, min(SCREEN_WIDTH - radius, position.x))
+        position.y = max(radius, min(SCREEN_HEIGHT - radius, position.y))
+        
         asteroid = Asteroid(position.x, position.y, radius)
         asteroid.velocity = velocity
 

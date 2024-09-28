@@ -16,6 +16,11 @@ class Asteroid(CircleShape):
         
     def update(self, dt):
         self.position += self.velocity * dt
+
+        # Check if the asteroid is outside the viewable area
+        if (self.position.x + self.radius < 0 or self.position.x - self.radius > SCREEN_WIDTH or
+                self.position.y + self.radius < 0 or self.position.y - self.radius > SCREEN_HEIGHT):
+            self.kill()
         
     def split(self):
         self.kill()

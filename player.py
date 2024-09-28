@@ -38,9 +38,9 @@ class Player(TriangleShape):
         if keys[pygame.K_d]:
             self.rotate(dt)
         if keys[pygame.K_w]:
-            self.move(dt)
-        if keys[pygame.K_s]:
             self.move(-dt)
+        if keys[pygame.K_s]:
+            self.move(dt)
         if keys[pygame.K_SPACE]:
             self.shot_cooldown -= dt
             self.shoot()
@@ -60,6 +60,10 @@ class Player(TriangleShape):
             if self.joystick.get_button(0):  # Button 0
                 self.shot_cooldown -= dt
                 self.shoot()
+        
+        # Ensure the player stays within the viewable area
+        self.position.x = max(self.radius, min(SCREEN_WIDTH - self.radius, self.position.x))
+        self.position.y = max(self.radius, min(SCREEN_HEIGHT - self.radius, self.position.y))
             
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
