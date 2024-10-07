@@ -44,8 +44,6 @@ def main():
     player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
     asteroid_field = AsteroidField()
 
-    paused = False
-    
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -53,11 +51,13 @@ def main():
                 return
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
-                    paused = not paused
+                    player.toggle_pause()
+                    
+        player.handle_pause_input()
 
-        UI.paused = paused
+        UI.paused = player.paused
         
-        if not paused:
+        if not player.paused:
             dt = clock.tick(FPS) / 1000
             
             for updatable in updatable_group:

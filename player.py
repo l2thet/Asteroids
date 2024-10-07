@@ -2,11 +2,14 @@ import pygame
 from triangleshape import TriangleShape
 from constants import *
 from shot import Shot
+from ui import UI
 
 class Player(TriangleShape):
     rotation = 0
     shot_cooldown = 0
     joystick = None
+    paused = False
+    pause_button_pressed = False
 
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
@@ -25,7 +28,7 @@ class Player(TriangleShape):
     
     def draw(self, screen):
         pygame.draw.polygon(screen, (255, 0, 0), self.triangle(), 2)
-        
+
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
         
@@ -47,17 +50,21 @@ class Player(TriangleShape):
         
         # Handle joystick input
         if self.joystick:
-            x_axis = self.joystick.get_axis(0)  # X-axis
-            y_axis = self.joystick.get_axis(1)  # Y-axis
-            if x_axis < -0.10:  # Left
-                self.rotate(dt * x_axis)
-            if x_axis > 0.10:  # Right
-                self.rotate(dt * x_axis)
-            if y_axis > -0.3:  # Up
-                self.move(dt * y_axis)
-            if y_axis < 0.3:  # Down
-                self.move(dt * y_axis)
-            if self.joystick.get_button(0):  # Button 0
+            x_axis = self.joystick.get_axis(0)
+            y_axis = self.joystick.get_axis(1)
+            
+            # Apply dead zone threshold
+            if abs(x_axis) < CONTROLLER_DEAD_ZONE:
+                x_axis = 0
+            if abs(y_axis) < CONTROLLER_DEAD_ZONE:
+                y_axis = 0
+            
+            # Rotate and move based on joystick input
+            self.rotation += x_axis * PLAYER_TURN_SPEED * dt
+            self.move(y_axis * dt)
+
+            # Shoot if the joystick trigger is pressed
+            if self.joystick.get_button(0):
                 self.shot_cooldown -= dt
                 self.shoot()
         
@@ -77,3 +84,15 @@ class Player(TriangleShape):
             shot_velocity = forward * SHOT_SPEED
             Shot(shot_position.x, shot_position.y, shot_velocity)
             self.shot_cooldown = PLAYER_SHOT_COOLDOWN
+
+    def handle_pause_input(self):
+        if self.joystick:
+            if self.joystick.get_button(7):
+                if not self.pause_button_pressed:
+                    self.toggle_pause()
+                    self.pause_button_pressed = True
+            else:
+                self.pause_button_pressed = False
+
+    def toggle_pause(self):
+        self.paused = not self.paused
