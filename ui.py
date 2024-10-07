@@ -5,7 +5,7 @@ class UI(pygame.sprite.Sprite):
     paused = False
     font = None
     start_time = 0
-    score_text = ""
+    survived_text = ""
     elapsed_time_text = ""
 
     def __init__(self):
@@ -18,29 +18,11 @@ class UI(pygame.sprite.Sprite):
         self.start_time = pygame.time.get_ticks()
 
     def update(self, dt):
-        # Generate "Survived:" text in white
-        self.score_text = self.font.render('Survived:', True, (255, 255, 255))
-        self.score_text_width = self.score_text.get_width()
-
-         # Calculate elapsed time
-        self.elapsed_time = (pygame.time.get_ticks() - self.start_time) // 1000  # Convert to seconds
-        self.elapsed_time_text = f'{self.elapsed_time}'
-
-        # Render elapsed time in red
-        self.elapsed_time_text = self.font.render(f'{self.elapsed_time}', True, (255, 255, 255))
-
+        self.build_survived_text()
         pass
 
     def draw(self, screen):
-        # Calculate positions
-        surface_width = screen.get_width()
-        x_score = surface_width - self.score_text_width - self.elapsed_time_text.get_width() - 10  # 10 pixels padding from the right edge
-        x_time = x_score + self.score_text_width
-        y = 10  # 10 pixels padding from the top edge
-            
-        # Blit texts to the screen
-        screen.blit(self.score_text, (x_score, y))
-        screen.blit(self.elapsed_time_text, (x_time, y))
+        self.draw_survived(screen)    
 
         if self.paused:
             text = self.font.render("Paused", True, (255, 255, 255))
@@ -49,3 +31,22 @@ class UI(pygame.sprite.Sprite):
 
     def get_time(self):
         return pygame.time.get_ticks() - self.start_time
+    
+    def build_survived_text(self):
+        self.survived_text = self.font.render('Survived:', True, (255, 255, 255))
+        self.score_text_width = self.survived_text.get_width()
+
+        self.elapsed_time = (pygame.time.get_ticks() - self.start_time) // 1000  # Convert to seconds
+        self.elapsed_time_text = f'{self.elapsed_time}'
+
+        self.elapsed_time_text = self.font.render(f'{self.elapsed_time}', True, (255, 255, 255))
+
+    def draw_survived(self, screen):
+        # Calculate positions
+        surface_width = screen.get_width()
+        x_score = surface_width - self.score_text_width - self.elapsed_time_text.get_width() - 10  # 10 pixels padding from the right edge
+        x_time = x_score + self.score_text_width
+        y = 10  # 10 pixels padding from the top edge
+            
+        screen.blit(self.survived_text, (x_score, y))
+        screen.blit(self.elapsed_time_text, (x_time, y))

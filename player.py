@@ -63,6 +63,16 @@ class Player(TriangleShape):
             self.rotation += x_axis * PLAYER_TURN_SPEED * dt
             self.move(y_axis * dt)
 
+            # Map the D-pad to movement
+            if self.joystick.get_hat(0) == (1, 0):
+                self.rotate(dt)
+            if self.joystick.get_hat(0) == (-1, 0):
+                self.rotate(-dt)
+            if self.joystick.get_hat(0) == (0, 1):
+                self.move(-dt)
+            if self.joystick.get_hat(0) == (0, -1):
+                self.move(dt)
+
             # Shoot if the joystick trigger is pressed
             if self.joystick.get_button(0):
                 self.shot_cooldown -= dt
