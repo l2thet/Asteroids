@@ -64,7 +64,7 @@ def main():
                 updatable.update(dt)
             
             for asteroid in asteroid_group:
-                if player.collission_check(asteroid):
+                if not player.invulnerable and player.collission_check(asteroid):
                     pygame.quit()
                     return
                 for shot in shots_group:
