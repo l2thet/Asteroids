@@ -54,32 +54,32 @@ class Player(CircleShape):
         if self.joystick:
             x_axis = self.joystick.get_axis(0)
             y_axis = self.joystick.get_axis(1)
+            x_axis_2 = self.joystick.get_axis(2)
+            y_axis_2 = self.joystick.get_axis(3)
             
             # Apply dead zone threshold
             if abs(x_axis) < CONTROLLER_DEAD_ZONE:
                 x_axis = 0
             if abs(y_axis) < CONTROLLER_DEAD_ZONE:
                 y_axis = 0
+
+            if abs(x_axis_2) < CONTROLLER_DEAD_ZONE:
+                x_axis_2 = 0
+            if abs(y_axis_2) < CONTROLLER_DEAD_ZONE:
+                y_axis_2 = 0
             
-            # Rotate and move based on joystick input
-            self.rotation += x_axis * PLAYER_TURN_SPEED * dt
-            self.move(y_axis * dt)
+            #move based on joystick input
+            self.move_y(y_axis * dt)
+            self.move_x(x_axis * dt)
 
-            # Map the D-pad to movement
-            if self.joystick.get_hat(0) == (1, 0):
-                self.rotate(dt)
-            if self.joystick.get_hat(0) == (-1, 0):
-                self.rotate(-dt)
-            if self.joystick.get_hat(0) == (0, 1):
-                self.move(-dt)
-            if self.joystick.get_hat(0) == (0, -1):
-                self.move(dt)
-
-            # Shoot if the joystick trigger is pressed
-            if self.joystick.get_button(0):
+            if x_axis_2 != 0 or y_axis_2 != 0:
+                self.rotation = pygame.math.Vector2(x_axis_2, -y_axis_2).angle_to(pygame.math.Vector2(0, 1))
                 self.shot_cooldown -= dt
                 self.shoot()
-        
+
+            if self.joystick.get_button(5) and self.invulnerability_cooldown <= 0:
+                self.activate_invulnerability()
+                
         if self.invulnerable:
             self.invulnerable_time -= dt
             if self.invulnerable_time <= 0:
@@ -127,3 +127,18 @@ class Player(CircleShape):
         self.invulnerable = True
         self.invulnerable_time = INVULENERABILITY_TIME
         self.invulnerability_cooldown = INVULENERABILITY_COOLDOWN
+
+    def move_y(self, dt):
+        if self.invulnerable:
+            self.position.y += PLAYER_SPEED * dt * PLAYER_SPEED_BOOST
+        else:
+            self.position.y += PLAYER_SPEED * dt
+    
+    def move_x(self, dt):
+        if self.invulnerable:
+            self.position.x += PLAYER_SPEED * dt * PLAYER_SPEED_BOOST
+        else:
+            self.position.x += PLAYER_SPEED * dt
+
+    def rotate(self, dt):
+        self.rotation = PLAYER_TURN_SPEED * dt
