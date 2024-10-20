@@ -3,6 +3,7 @@ import random
 
 from circleshape import CircleShape
 from constants import *
+from minorbuff import MinorBuff
 
 
 class Asteroid(CircleShape):   
@@ -25,6 +26,9 @@ class Asteroid(CircleShape):
     def split(self):
         self.kill()
         if self.radius <= ASTEROID_MIN_RADIUS:
+            if random.random() < 0.1:
+                minor_buff = MinorBuff(self.position.x, self.position.y)
+                return [minor_buff]
             return
         random_angle = random.uniform(20, 50)
         asteroid_one_velocity = self.velocity.rotate(random_angle)

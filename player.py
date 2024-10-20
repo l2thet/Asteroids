@@ -12,6 +12,7 @@ class Player(CircleShape):
     invulnerable = False
     invulnerable_time = INVULENERABILITY_TIME
     invulnerability_cooldown = 0
+    minor_buffs_obtained = 1
 
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
@@ -108,7 +109,7 @@ class Player(CircleShape):
             forward = pygame.Vector2(0, -1).rotate(self.rotation)
             shot_position = self.position + forward * self.radius
             shot_velocity = forward * SHOT_SPEED
-            Shot(shot_position.x, shot_position.y, shot_velocity)
+            Shot(shot_position.x, shot_position.y, shot_velocity, SHOT_RADIUS * self.minor_buffs_obtained)
             self.shot_cooldown = PLAYER_SHOT_COOLDOWN
 
     def handle_pause_input(self):
@@ -142,3 +143,6 @@ class Player(CircleShape):
 
     def rotate(self, dt):
         self.rotation = PLAYER_TURN_SPEED * dt
+
+    def collect_minor_buff(self):
+        self.minor_buffs_obtained += 1

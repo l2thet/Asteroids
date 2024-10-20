@@ -1,5 +1,6 @@
 import pygame
 from constants import *
+from minorbuff import MinorBuff
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
@@ -40,6 +41,7 @@ def main():
     AsteroidField.containers = (updatable_group)
     Shot.containers = (updatable_group, drawable_group, shots_group)
     UI.containers = (updatable_group, drawable_group)
+    MinorBuff.containers = (updatable_group, drawable_group)
     
     player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
     asteroid_field = AsteroidField()
@@ -69,12 +71,22 @@ def main():
                     return
                 for shot in shots_group:
                     if shot.collission_check(asteroid):
-                        new_asteroids = asteroid.split()
-                        if new_asteroids:
-                            for asteroid_data in new_asteroids:
-                                asteroid_field.spawn(*asteroid_data)
+                        new_objects = asteroid.split()
+                        if new_objects:
+                            for obj in new_objects:
+                                if isinstance(obj, MinorBuff):
+                                    updatable_group.add(obj)
+                                    drawable_group.add(obj)
+                                else:
+                                    asteroid_field.spawn(*obj)
                         shot.kill()
                         break
+            
+            # Check for collisions between player and MinorBuff objects
+            for minor_buff in updatable_group:
+                if isinstance(minor_buff, MinorBuff) and player.collission_check(minor_buff):
+                    player.collect_minor_buff()
+                    minor_buff.kill()
         else:
             clock.tick(FPS)
         draw()
