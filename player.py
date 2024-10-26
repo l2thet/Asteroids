@@ -1,3 +1,4 @@
+import math
 import pygame
 from circleshape import CircleShape
 from constants import *
@@ -31,8 +32,9 @@ class Player(CircleShape):
         direction_end = self.position + pygame.Vector2(0, -direction_length).rotate(self.rotation)
         pygame.draw.line(screen, color, self.position, direction_end, 2)
 
-    def rotate(self, dt):
-        self.rotation += PLAYER_TURN_SPEED * dt
+    def rotate(self, angle):
+        self.rotation = angle
+        self.rotation %= 360
         
     def update(self, dt):
         keys = pygame.key.get_pressed()
@@ -54,6 +56,11 @@ class Player(CircleShape):
         if keys[pygame.K_LSHIFT] and self.invulnerability_cooldown <= 0:
             self.activate_invulnerability()
         
+        if not self.joystick:
+            direction = self.position - pygame.mouse.get_pos()
+            direction.y *= -1
+            self.rotation = direction.normalize().angle_to(pygame.Vector2(0, -1))
+
         # Handle joystick input
         if self.joystick:
             x_axis = self.joystick.get_axis(0)
@@ -72,7 +79,6 @@ class Player(CircleShape):
             if abs(y_axis_2) < CONTROLLER_DEAD_ZONE:
                 y_axis_2 = 0
             
-            #move based on joystick input
             self.move_y(y_axis * dt)
             self.move_x(x_axis * dt)
 
@@ -143,9 +149,6 @@ class Player(CircleShape):
             self.position.x += PLAYER_SPEED * dt * PLAYER_SPEED_BOOST
         else:
             self.position.x += PLAYER_SPEED * dt
-
-    def rotate(self, dt):
-        self.rotation = PLAYER_TURN_SPEED * dt
 
     def collect_minor_buff(self):
         self.minor_buffs_obtained += 1
