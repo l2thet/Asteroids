@@ -81,6 +81,16 @@ def main():
                                     asteroid_field.spawn(*obj)
                         shot.kill()
                         break
+                for i, offset in enumerate(player.circles):
+                    circle_position = player.position + offset
+                    if circle_position.distance_to(asteroid.position) < player.radius + asteroid.radius:
+                        if i == 0:
+                            print("Game Over!")
+                            pygame.quit()
+                            return
+                        else:
+                            player.circles.pop(i)
+                            break
             
             # Check for collisions between player and MinorBuff objects
             for minor_buff in updatable_group:

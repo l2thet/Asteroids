@@ -2,6 +2,7 @@ import math
 import pygame
 from circleshape import CircleShape
 from constants import *
+from minorbuff import MinorBuff
 from shot import Shot
 
 class Player(CircleShape):
@@ -14,6 +15,7 @@ class Player(CircleShape):
     invulnerable_time = INVULENERABILITY_TIME
     invulnerability_cooldown = 0
     minor_buffs_obtained = 1
+    circles = []
 
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
@@ -22,11 +24,25 @@ class Player(CircleShape):
         if pygame.joystick.get_count() > 0:
             self.joystick = pygame.joystick.Joystick(0)
             self.joystick.init()
+        
+        self.position - pygame.Vector2(x, y)
+        self.radius = PLAYER_RADIUS
+        self.circles = [
+            pygame.Vector2(0, 0),
+            pygame.Vector2(-self.radius * 1.5, 0),
+            pygame.Vector2(self.radius * 1.5, 0), 
+            pygame.Vector2(0, -self.radius * 1.5),
+            pygame.Vector2(0, self.radius * 1.5)
+        ]
           
     def draw(self, screen):
-        color = (255, 0, 0) if not self.invulnerable else (255, 255, 0)
-
-        pygame.draw.circle(screen, color, self.position, self.radius, 2)
+        for i, offset in enumerate(self.circles):
+            if i == 0:
+                color = (255, 0, 0) if not self.invulnerable else (255, 255, 0)
+            else:
+                color = (255, 255, 255)
+            circle_position = self.position + offset
+            pygame.draw.circle(screen, color, (int(circle_position.x), int(circle_position.y)), self.radius, 2)
         
         direction_length = self.radius * 1.5
         direction_end = self.position + pygame.Vector2(0, -direction_length).rotate(self.rotation)
