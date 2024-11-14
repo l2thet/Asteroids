@@ -32,7 +32,8 @@ def main():
     asteroid_group = pygame.sprite.Group()
     shots_group = pygame.sprite.Group()
     
-    ui = UI()
+    menu_items = ['Resume', 'Options', 'Quit']
+    ui = UI(menu_items)
     updatable_group.add(ui)
     drawable_group.add(ui)
 
@@ -54,12 +55,26 @@ def main():
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     player.toggle_pause()
-                    
+                if player.paused:
+                    if event.key == pygame.K_UP:
+                        ui.navigate(-1)
+                    elif event.key == pygame.K_DOWN:
+                        ui.navigate(1)
+                    elif event.key == pygame.K_RETURN:
+                        if ui.selected_index == 0:
+                            player.toggle_pause()
+                        elif ui.selected_index == 2:
+                            pygame.quit()
+                            return
+                            
         player.handle_pause_input()
 
         UI.paused = player.paused
         
-        if not player.paused:
+        if player.paused:
+            ui.draw(window_surface)
+            pygame.display.flip()
+        else:
             dt = clock.tick(FPS) / 1000
             
             for updatable in updatable_group:
@@ -96,10 +111,8 @@ def main():
             for minor_buff in updatable_group:
                 if isinstance(minor_buff, MinorBuff) and player.collission_check(minor_buff):
                     player.collect_minor_buff()
-                    minor_buff.kill()
-        else:
-            clock.tick(FPS)
-        draw()
+                    minor_buff.kill()                  
+            draw()
     
 
         
